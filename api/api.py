@@ -30,7 +30,7 @@ async def update_task(id: int, modified_task: Task):
     return
 
 
-@app.post("/delete_task/{id}")
+@app.delete("/delete_task/{id}")
 async def delete_task(id: int):
     for index, task in enumerate(tasks):
         if task.id == id:
@@ -46,7 +46,7 @@ async def get_tasks():
 
 @app.get("/get_tasks/{id}")
 async def get_task_by_id(id: int):
-    task = [task for task in tasks if task.id == id]
-    if not task:
-        raise HTTPException(status_code=404, detail="item id not found")
-    return task[0]
+    for task in tasks:
+        if task.id == id:
+            return task
+    raise HTTPException(status_code=404, detail="item id not found")
