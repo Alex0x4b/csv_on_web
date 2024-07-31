@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
 from time import time
 
 
@@ -24,6 +25,18 @@ class ReturnTask(BaseTask):
     pass
 
 
+# Default middleware build by fast api
+# CORSMiddleware improve security by restrict who can query the api
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # from everywhere
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+
+# Custom middleware to execute code before and after the route
 @app.middleware("http")
 async def log_proceess_time_middleware(request, call_next):
     # Before the root
