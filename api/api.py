@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
+from time import time
 
 
 app = FastAPI()
@@ -13,15 +14,30 @@ class BaseTask(BaseModel):
 
 
 class Task(BaseTask):
+    # A task is BaseTask + Task attributes
     id: Optional[int] = None  # Handle by data base
     is_completed: bool = False
 
 
 class ReturnTask(BaseTask):
+    # Returning BaseTask
     pass
 
 
-@app.post("/add_task", response_model=ReturnTask)
+@app.middleware("http")
+async def log_proceess_time_middleware(request, call_next):
+    # Before the root
+    start_time = time()
+    # The route
+    response = await call_next(request)
+    # After the route
+    end_time = time()
+    process_time = end_time - start_time
+    print(f"Request {request.url} processed in {process_time} seconds")
+    return response
+
+
+@app.post("/add_task", response_model=ReturnTask)  # possible to mock a response model
 async def add_task(task: Task):
     task.id = len(tasks) + 1
     tasks.append(task)
@@ -47,7 +63,7 @@ async def delete_task(id: int):
 
 
 @app.get("/get_tasks")
-async def get_tasks(completed: Optional[bool] = None):
+async def get_tasks(completed: Optional[bool] = None):  # add parameters
     if completed is not None:
         return [task for task in tasks if task.is_completed == completed]
     return tasks
