@@ -47,7 +47,9 @@ async def delete_task(id: int):
 
 
 @app.get("/get_tasks")
-async def get_tasks():
+async def get_tasks(completed: Optional[bool] = None):
+    if completed is not None:
+        return [task for task in tasks if task.is_completed == completed]
     return tasks
 
 
