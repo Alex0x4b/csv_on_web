@@ -21,6 +21,24 @@ async def add_task(task: Task):
     return task
 
 
+@app.put("/update_task/{id}")
+async def update_task(id: int, modified_task: Task):
+    for index, task in enumerate(tasks):
+        if task.id == id:
+            tasks[index] = modified_task
+            tasks[index].id = id
+    return
+
+
+@app.post("/delete_task/{id}")
+async def delete_task(id: int):
+    for index, task in enumerate(tasks):
+        if task.id == id:
+            tasks.pop(index)
+            return
+    raise HTTPException(status_code=404, detail="item id not found")
+
+
 @app.get("/get_tasks")
 async def get_tasks():
     return tasks
