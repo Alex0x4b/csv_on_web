@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 
@@ -14,6 +14,13 @@ class Task(BaseModel):
     is_completed: bool = False
 
 
+@app.post("/add_task")
+async def add_task(task: Task):
+    task.id = len(tasks) + 1
+    tasks.append(task)
+    return task
+
+
 @app.get("/get_tasks")
 async def get_tasks():
     return tasks
@@ -21,12 +28,7 @@ async def get_tasks():
 
 @app.get("/get_tasks/{id}")
 async def get_task_by_id(id: int):
-    task = [task for task in tasks if task.id == id][0]
-    return task
-
-
-@app.post("/add_task")
-async def add_task(task: Task):
-    task.id = len(tasks) + 1
-    tasks.append(task)
-    return task
+    task = [task for task in tasks if task.id == id]
+    if not task:
+        raise HTTPException(status_code=404, detail="item id not found")
+    return task[0]
