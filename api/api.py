@@ -2,7 +2,9 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
-from time import time
+from fastapi.background import BackgroundTasks
+import asyncio
+from time import time, sleep
 
 
 app = FastAPI()
@@ -50,10 +52,20 @@ async def log_proceess_time_middleware(request, call_next):
     return response
 
 
-@app.post("/add_task", response_model=ReturnTask)  # possible to mock a response model
-async def add_task(task: Task):
+async def send_email(task: Task):
+    print(f"Start sending email for {task.id}...")
+    await asyncio.sleep(3)
+    print(f"OK: email notification form task {task.id} sent")
+
+
+# it is possible to mock a response model (i.e. filter object for response)
+# it is possible to send task in the background and returning right away to not block
+# the API. Note: the BackgroundTask will inot be returning by the API even when finished
+@app.post("/add_task", response_model=ReturnTask)
+async def add_task(task: Task, background_task: BackgroundTasks):
     task.id = len(tasks) + 1
     tasks.append(task)
+    background_task.add_task(send_email, task=task)
     return task
 
 
