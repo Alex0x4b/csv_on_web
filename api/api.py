@@ -7,14 +7,21 @@ app = FastAPI()
 tasks = []
 
 
-class Task(BaseModel):
+class BaseTask(BaseModel):
     # Ensure input is correct to avoid DB injection or unespected behaviour
-    id: Optional[int] = None  # Handle by data base
     task: str
+
+
+class Task(BaseTask):
+    id: Optional[int] = None  # Handle by data base
     is_completed: bool = False
 
 
-@app.post("/add_task")
+class ReturnTask(BaseTask):
+    pass
+
+
+@app.post("/add_task", response_model=ReturnTask)
 async def add_task(task: Task):
     task.id = len(tasks) + 1
     tasks.append(task)
