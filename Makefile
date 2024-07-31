@@ -25,3 +25,7 @@ tests:
 	@make qa_check_code
 	# @make unittest
 	@make clean
+
+# Run server
+run_API:
+	@uvicorn api.api:app --host 127.0.0.1 --port 5566 --reload
