@@ -3,7 +3,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "htmx_with_fastapi"
+name = "todo_app_with_htmx"
 version = "0.1.0"
 description = ""
 authors = [{name = "Alexandre Khalifé", email = "alexandre.khalife.oelp2@slmail.me"}]
