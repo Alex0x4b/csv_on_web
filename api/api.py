@@ -116,8 +116,7 @@ async def delete_task(id: int):
     raise HTTPException(status_code=404, detail="item id not found")
 
 
-# @app.get("/get_tasks", response_class=HTMLResponse)
-@app.get("/get_tasks")
+@app.get("/get_tasks", response_class=HTMLResponse)
 async def get_tasks(
     request: Request,
     id: int | None = None,
@@ -131,8 +130,7 @@ async def get_tasks(
             task for task in filtered_tasks
             if task.is_completed == completed
         ]
-    return tasks
-# templates.TemplateResponse(
-#         request=request,
-#         name="index.html",
-#         content=filtered_tasks)
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={"tasks": filtered_tasks})
