@@ -4,9 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <link rel="stylesheet" type="text/css" href="styles.css" />  -->
-    <title>Welcome</title>
+    <script src="https://unpkg.com/htmx.org@2.0.1"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+   <title>Welcome</title>
 </head>
-<body>
-    <h1>Hello World</h1>
-    <p>Total tasks: {{ total_tasks }}</p>
+<body class="p-4">
+    <h1 class="text-2xl pb-6 font-bold">Task Manager</h1>
+    <p class="mb-4 italic">Total tasks: {{ total_tasks }}</p>
+    <div class="overflow-x-auto max-w-4xl">
+        <div class="flex flex-row mt-5 mb-5">
+            <input type="text", placeholder="Write new task", class="input input-bordered
+            w-full mr-2">
+            <button class="btn">Add Task</button>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                   <th>Task id</th>
+                   <td>Detail</td>
+                   <td>Is completed</td>
+                   <td>Actions</td>
+               </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <th>{{ task.id }}</th>
+                    <td>{{ task.task }}</td>
+                    <td>{{ task.is_completed }}</td>
+                    <td>
+                        <button class="btn btn-xs bg-red-700 text-white hover:bg-red-900">Remove</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
