@@ -75,6 +75,31 @@ async def send_email(task: Task):
 
 
 """
+Methods
+=======
+"""
+
+
+def get_total_tasks():
+    return len(tasks)
+
+
+def list_tasks(
+    id: int | None = None,
+    completed: bool | None = None
+):
+    filtered_tasks = tasks.copy()
+    if id is not None:
+        filtered_tasks = [task for task in filtered_tasks if task.id == id]
+    if completed is not None:
+        filtered_tasks = [
+            task for task in filtered_tasks
+            if task.is_completed == completed
+        ]
+    return filtered_tasks
+
+
+"""
 Endpoints
 =========
 """
@@ -82,7 +107,11 @@ Endpoints
 
 @app.get("/", response_class=HTMLResponse)
 def get_homepage(request: Request):
-    context = {"total_tasks": len(tasks)}
+    context = {
+        "total_tasks": get_total_tasks(),
+        "tasks": list_tasks()
+    }
+    print(context)
     return templates.TemplateResponse(
         request=request, name="index.html", context=context)
 
@@ -116,21 +145,19 @@ async def delete_task(id: int):
     raise HTTPException(status_code=404, detail="item id not found")
 
 
+@app.get("/total_tasks")
+def total_tasks():
+    return get_total_tasks()
+
+
 @app.get("/get_tasks", response_class=HTMLResponse)
 async def get_tasks(
     request: Request,
     id: int | None = None,
     completed: bool | None = None
 ):
-    filtered_tasks = tasks.copy()
-    if id is not None:
-        filtered_tasks = [task for task in filtered_tasks if task.id == id]
-    if completed is not None:
-        filtered_tasks = [
-            task for task in filtered_tasks
-            if task.is_completed == completed
-        ]
+    filtered_tasks = list_tasks(id=id, completed=completed)
     return templates.TemplateResponse(
         request=request,
-        name="index.html",
+        name="tasks.html",
         context={"tasks": filtered_tasks})
