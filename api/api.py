@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +10,7 @@ from time import time, sleep
 
 
 app = FastAPI()
-templates = Jinja2Templates(directory="../web/templates")
+templates = Jinja2Templates(directory="web/templates")
 
 tasks = []
 
@@ -76,6 +78,13 @@ async def send_email(task: Task):
 Endpoints
 =========
 """
+
+
+@app.get("/", response_class=HTMLResponse)
+def get_homepage(request: Request):
+    context = {"total_tasks": len(tasks)}
+    return templates.TemplateResponse(
+        request=request, name="index.html", context=context)
 
 
 # it is possible to mock a response model (i.e. filter object for response)
