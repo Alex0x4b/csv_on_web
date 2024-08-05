@@ -1,0 +1,10 @@
+{% for task in tasks %}
+<tr>
+    <th>{{ task.id }}</th>
+    <td>{{ task.task }}</td>
+    <td>{{ task.is_completed }}</td>
+    <td>
+        <button class="btn btn-xs bg-red-700 text-white hover:bg-red-900">Remove</button>
+    </td>
+</tr>
+{% endfor %}

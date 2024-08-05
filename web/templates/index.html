@@ -12,13 +12,13 @@
 <body class="p-4">
     <h1 class="text-2xl pb-6 font-bold">Task Manager</h1>
     <p class="mb-4 italic">Total tasks: {{ total_tasks }}</p>
-    <div class="overflow-x-auto max-w-4xl">
+    <div class="overflow-x-auto min-w-[50%] max-w-4xl">
         <div class="flex flex-row mt-5 mb-5">
             <input type="text", placeholder="Write new task", class="input input-bordered
             w-full mr-2">
-            <button class="btn">Add Task</button>
+            <button class="btn" >Add Task</button>
         </div>
-        <table class="table">
+        <table id="task-table" class="table">
             <thead>
                 <tr>
                    <th>Task id</th>
@@ -28,16 +28,7 @@
                </tr>
             </thead>
             <tbody>
-                {% for task in tasks %}
-                <tr>
-                    <th>{{ task.id }}</th>
-                    <td>{{ task.task }}</td>
-                    <td>{{ task.is_completed }}</td>
-                    <td>
-                        <button class="btn btn-xs bg-red-700 text-white hover:bg-red-900">Remove</button>
-                    </td>
-                </tr>
-                {% endfor %}
+                {% include 'tasks.html' %}
             </tbody>
         </table>
     </div>
