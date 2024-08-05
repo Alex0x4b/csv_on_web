@@ -8,7 +8,15 @@ from time import time, sleep
 
 
 app = FastAPI()
+templates = Jinja2Templates(directory="../web/templates")
+
 tasks = []
+
+
+"""
+Type Classe
+===========
+"""
 
 
 class BaseTask(BaseModel):
@@ -27,7 +35,13 @@ class ReturnTask(BaseTask):
     pass
 
 
-# Default middleware build by fast api
+"""
+Middleware
+==========
+"""
+
+
+# Default middleware build by fastapi
 # CORSMiddleware improve security by restrict who can query the api
 app.add_middleware(
     CORSMiddleware,
@@ -56,6 +70,12 @@ async def send_email(task: Task):
     print(f"Start sending email for {task.id}...")
     await asyncio.sleep(3)
     print(f"OK: email notification form task {task.id} sent")
+
+
+"""
+Endpoints
+=========
+"""
 
 
 # it is possible to mock a response model (i.e. filter object for response)
@@ -88,15 +108,16 @@ async def delete_task(id: int):
 
 
 @app.get("/get_tasks")
-async def get_tasks(completed: Optional[bool] = None):  # add parameters
+async def get_tasks(
+    id: int | None = None,
+    completed: bool | None = None
+):
+    filtered_tasks = tasks.copy()
+    if id is not None:
+        filtered_tasks = [task for task in filtered_tasks if task.id == id]
     if completed is not None:
-        return [task for task in tasks if task.is_completed == completed]
-    return tasks
-
-
-@app.get("/get_tasks/{id}")
-async def get_task_by_id(id: int):
-    for task in tasks:
-        if task.id == id:
-            return task
-    raise HTTPException(status_code=404, detail="item id not found")
+        filtered_tasks = [
+            task for task in filtered_tasks
+            if task.is_completed == completed
+        ]
+    return filtered_tasks
