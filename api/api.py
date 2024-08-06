@@ -142,7 +142,7 @@ async def update_task(id: int, modified_task: Task):
     return
 
 
-@app.delete("/delete_task/{id}")
+@app.delete("/delete_task/{id}", response_class=HTMLResponse)
 async def delete_task(id: int):
     for index, task in enumerate(tasks):
         if task.id == id:
