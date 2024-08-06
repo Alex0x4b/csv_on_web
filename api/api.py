@@ -1,12 +1,11 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.background import BackgroundTasks
 import asyncio
-from time import time, sleep
+from time import time
 
 
 app = FastAPI()
@@ -22,19 +21,18 @@ Type Classe
 
 
 class BaseTask(BaseModel):
-    # Ensure input is correct to avoid DB injection or unespected behaviour
     task: str
 
 
 class Task(BaseTask):
-    # A task is BaseTask + Task attributes
-    id: Optional[int] = None  # Handle by data base
+    # task: str
+    id: int | None = None  # Handle by data base
     is_completed: bool = False
 
-
-class ReturnTask(BaseTask):
-    # Returning BaseTask
-    pass
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.id = max([task.id for task in tasks] + [0]) + 1
+        self.is_completed = False
 
 
 """
@@ -111,7 +109,6 @@ def get_homepage(request: Request):
         "total_tasks": get_total_tasks(),
         "tasks": list_tasks()
     }
-    print(context)
     return templates.TemplateResponse(
         request=request, name="index.html", context=context)
 
@@ -119,9 +116,12 @@ def get_homepage(request: Request):
 # it is possible to mock a response model (i.e. filter object for response)
 # it is possible to send task in the background and returning right away to not block
 # the API. Note: the BackgroundTask will inot be returning by the API even when finished
-@app.post("/add_task", response_model=ReturnTask)
-async def add_task(task: Task, background_task: BackgroundTasks):
-    task.id = len(tasks) + 1
+@app.post("/add_task", response_model=BaseTask)
+async def add_task(
+    background_task: BackgroundTasks,
+    task: str = Form(...),
+):
+    task = Task(task=task)
     tasks.append(task)
     background_task.add_task(send_email, task=task)
     return task
