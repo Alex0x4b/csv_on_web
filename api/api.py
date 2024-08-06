@@ -113,18 +113,21 @@ def get_homepage(request: Request):
         request=request, name="index.html", context=context)
 
 
-# it is possible to mock a response model (i.e. filter object for response)
+# it is possible to mock a response_model (i.e. filter object for response)
 # it is possible to send task in the background and returning right away to not block
 # the API. Note: the BackgroundTask will inot be returning by the API even when finished
-@app.post("/add_task", response_model=BaseTask)
+@app.post("/add_task", response_class=HTMLResponse)
 async def add_task(
+    request: Request,
     background_task: BackgroundTasks,
     task: str = Form(...),
 ):
     task = Task(task=task)
     tasks.append(task)
     background_task.add_task(send_email, task=task)
-    return task
+    context = {"tasks": tasks}
+    return templates.TemplateResponse(
+        request=request, name="tasks.html", context=context)
 
 
 @app.put("/update_task/{id}")
