@@ -1,22 +1,25 @@
-{% if tasks %}
-<thead>
-    <tr>
-       <th>Task id</th>
-       <td>Detail</td>
-       <td>Is completed</td>
-       <td>Actions</td>
-   </tr>
-</thead>
-<tbody class="tasks-table-body">
-    {% for task in tasks %}
-    <tr>
-        <th>{{ task.id }}</th>
-        <td>{{ task.task }}</td>
-        <td>{{ task.is_completed }}</td>
-        <td>
-            <button class="btn btn-xs bg-red-700 text-white hover:bg-red-900">Remove</button>
-        </td>
-    </tr>
-    {% endfor %}
-</tbody>
-{% endif %}
+<p id="total-tasks" class="text-s mb-2 mt-9 italic">Total tasks: {{ total_tasks }}</p>
+<table class="table table-xs">
+    {% if tasks %}
+    <thead>
+        <tr>
+           <th>Task id</th>
+           <td>Detail</td>
+           <td>Is completed</td>
+           <td>Actions</td>
+       </tr>
+    </thead>
+    <tbody class="tasks-table-body">
+        {% for task in tasks %}
+        <tr>
+            <th>{{ task.id }}</th>
+            <td>{{ task.task }}</td>
+            <td>{{ task.is_completed }}</td>
+            <td>
+                <button class="btn btn-xs bg-red-700 text-white hover:bg-red-900">Remove</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    {% endif %}
+</table>

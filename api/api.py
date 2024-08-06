@@ -125,7 +125,10 @@ async def add_task(
     task = Task(task=task)
     tasks.append(task)
     background_task.add_task(send_email, task=task)
-    context = {"tasks": tasks}
+    context = {
+        "total_tasks": get_total_tasks(),
+        "tasks": list_tasks()
+    }
     return templates.TemplateResponse(
         request=request, name="tasks.html", context=context)
 
